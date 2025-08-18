@@ -171,6 +171,13 @@ export interface SamlOptions extends Partial<SamlSigningOptions>, MandatorySamlO
   generateUniqueId: () => string;
   signMetadata: boolean;
 
+  // SubjectConfirmationData Recipient validation
+  validateSubjectConfirmationRecipient?: boolean;
+  customSubjectConfirmationRecipientValidator?: (
+    recipient: string,
+    callbackUrl: string,
+  ) => boolean;
+
   // InResponseTo Validation
   validateInResponseTo: ValidateInResponseTo;
   requestIdExpirationPeriodMs: number;

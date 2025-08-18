@@ -148,6 +148,10 @@ class SAML {
       generateUniqueId: ctorOptions.generateUniqueId ?? generateUniqueId,
       signMetadata: ctorOptions.signMetadata ?? false,
       racComparison: ctorOptions.racComparison ?? "exact",
+      validateSubjectConfirmationRecipient:
+        ctorOptions.validateSubjectConfirmationRecipient ?? false,
+      customSubjectConfirmationRecipientValidator:
+        ctorOptions.customSubjectConfirmationRecipientValidator,
     };
 
     if (!Object.values(ValidateInResponseTo).includes(options.validateInResponseTo)) {
@@ -1084,6 +1088,20 @@ class SAML {
 
         if (subjectConfirmation != null) {
           confirmData = subjectConfirmation.SubjectConfirmationData[0];
+          // Optional Recipient validation against ACS callbackUrl
+          const shouldValidateRecipient = this.options.validateSubjectConfirmationRecipient ?? true;
+          if (shouldValidateRecipient && confirmData?.$?.Recipient) {
+            const recipient = confirmData.$.Recipient;
+            const acsUrl = this.options.callbackUrl;
+            const customValidator = this.options.customSubjectConfirmationRecipientValidator;
+            const isValidRecipient =
+              typeof customValidator === "function"
+                ? customValidator(recipient, acsUrl)
+                : recipient === acsUrl;
+            if (!isValidRecipient) {
+              throw new Error("SubjectConfirmationData Recipient does not match callbackUrl");
+            }
+          }
         }
       }
 
