@@ -84,6 +84,9 @@ const saml = new SAML(options);
 - `authnContext`: if truthy, name identifier format to request auth context (default: `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport`); array of values is also supported
 - `racComparison`: Requested Authentication Context comparison type. Possible values are 'exact','minimum','maximum','better'. Default is 'exact'.
 
+- `validateSubjectConfirmationRecipient`: if true, verifies that the `SubjectConfirmationData` `Recipient` attribute matches your configured `callbackUrl` (ACS URL). Default is false to preserve backward compatibility. 
+- `customSubjectConfirmationRecipientValidator`: optional function `(recipient, callbackUrl) => boolean` to override the default equality check. Useful for multi-tenant setups (e.g., allow different hosts but identical paths).
+
 - `forceAuthn`: if set to true, the initial SAML request from the service provider specifies that the IdP should force re-authentication of the user, even if they possess a valid session.
 - `passive`: if set to true, specifies that the IdP must not visibly take control of the user interface and interact with the user.
 - `providerName`: optional human-readable name of the requester for use by the presenter's user agent or the identity provider
